@@ -71,8 +71,8 @@ CREATE TABLE pegawais (
                           updated_at TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP
 );
 
--- Table for borrowings (peminjamen)
-CREATE TABLE peminjamen (
+-- Table for borrowings (peminjaman)
+CREATE TABLE peminjaman (
                             id_peminjaman VARCHAR(26) PRIMARY KEY,
                             id_anggota VARCHAR(26),
                             tgl_pinjam TIMESTAMP(3),

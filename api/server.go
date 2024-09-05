@@ -6,55 +6,39 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func RegisterPath(f *fiber.App,
-	userCon *user.Controller,
-	bukuCon *buku.Controller) {
+// RegisterPath sets up all the routes for the API.
+func RegisterPath(f *fiber.App, userCon *user.Controller, bukuCon *buku.Controller) {
+	// Group routes under /api/v1
+	apiGroup := f.Group("/api/v1")
 
-	route := f.Group("/api")
-	v1 := route.Group("/v1")
+	// User routes
+	userRoutes := apiGroup.Group("/users")
+	userRoutes.Post("/login", userCon.Login)
 
-	// disabale sementara
-	// v1.Use(middleware.CSRF)
+	// Buku routes
+	bukuRoutes := apiGroup.Group("/bukus")
 
-	// pegawai route
-	pegawaiRoutes := v1.Group("/pegawai")
-	pegawaiRoutes.Get("/", func(c *fiber.Ctx) error {
-		return c.JSON(fiber.Map{
-			"status": "sukses",
-		})
-	})
-	pegawaiRoutes.Post("/login", userCon.Login)
+	// Jenis Buku routes
+	jenisBukuRoutes := bukuRoutes.Group("/jenis")
+	jenisBukuRoutes.Get("/", bukuCon.GetAllJenisBuku)
+	jenisBukuRoutes.Get("/:id", bukuCon.GetJenisBukuById)
+	jenisBukuRoutes.Post("/", bukuCon.CreateJenisBuku) // Fixed: Added leading '/'
+	jenisBukuRoutes.Put("/:id", bukuCon.UpdateJenisBuku)
+	jenisBukuRoutes.Delete("/:id", bukuCon.DeleteJenisBuku)
 
-	//end pegawai area
+	// Penerbit Buku routes
+	penerbitBukuRoutes := bukuRoutes.Group("/penerbit")
+	penerbitBukuRoutes.Get("/", bukuCon.GetAllPenerbitBuku)
+	penerbitBukuRoutes.Get("/:id", bukuCon.GetPenerbitBukuById)
+	penerbitBukuRoutes.Post("/", bukuCon.CreatePenerbitBuku) // Fixed: Added leading '/'
+	penerbitBukuRoutes.Put("/:id", bukuCon.UpdatePenerbitBuku)
+	penerbitBukuRoutes.Delete("/:id", bukuCon.DeletePenerbitBuku)
 
-	//buku area
-	bukuRoute := v1.Group("/buku")
-
-	//jenis buku route
-	jenBuk := bukuRoute.Group("/jenbuk")
-	jenBuk.Get("/", bukuCon.GetAllJenisBuku)
-	jenBuk.Get("/:id", bukuCon.GetJenisBukuById)
-	jenBuk.Post("create", bukuCon.CreateJenisBuku)
-	jenBuk.Put("update", bukuCon.UpdateJenisBuku)
-	jenBuk.Delete("delete", bukuCon.DeleteJenisBuku)
-	// end jenis buku
-
-	// penerbit buku area
-	penbuk := bukuRoute.Group("/penbuk")
-	penbuk.Get("/", bukuCon.GetAllPenerbitBuku)
-	penbuk.Get("/:id", bukuCon.GetPenerbitBukuById)
-	penbuk.Post("create", bukuCon.CreatePenerbitBuku)
-	penbuk.Put("update", bukuCon.UpdatePenerbitBuku)
-	penbuk.Delete("delete", bukuCon.DeletePenerbitBuku)
-	// end penerbit buku
-
-	// penulis buku area
-	author := bukuRoute.Group("/author")
-	author.Get("/", bukuCon.GetAllPenulisBuku)
-	author.Get("/:id", bukuCon.GetPenulisBukuById)
-	author.Post("create", bukuCon.CreatePenulisBuku)
-	author.Put("update", bukuCon.UpdatePenulisBuku)
-	author.Delete("delete", bukuCon.DeletePenulisBuku)
-	// end penulis buku area
-	//end buku area
+	// Penulis Buku routes
+	penulisBukuRoutes := bukuRoutes.Group("/penulis")
+	penulisBukuRoutes.Get("/", bukuCon.GetAllPenulisBuku)
+	penulisBukuRoutes.Get("/:id", bukuCon.GetPenulisBukuById)
+	penulisBukuRoutes.Post("/", bukuCon.CreatePenulisBuku) // Fixed: Added leading '/'
+	penulisBukuRoutes.Put("/:id", bukuCon.UpdatePenulisBuku)
+	penulisBukuRoutes.Delete("/:id", bukuCon.DeletePenulisBuku)
 }

@@ -1,4 +1,4 @@
-package database
+package seed
 
 import (
 	"database/sql"
