@@ -2,13 +2,13 @@ package configs
 
 import (
 	"fmt"
-
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-// mysql database konektor
-func MySQLConn() *gorm.DB {
+// PostgreSQLConn establishes a connection to the PostgreSQL database.
+func PostgreSQLConn() *gorm.DB {
+	LoadConfig()
 
 	configDB := map[string]string{
 		"DB_Username": Config("DB_USERNAME"),
@@ -20,16 +20,16 @@ func MySQLConn() *gorm.DB {
 	fmt.Println(configDB)
 	fmt.Println("Server running well...")
 
-	openConnection := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		configDB["DB_Username"],
-		configDB["DB_Password"],
+	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		configDB["DB_Host"],
 		configDB["DB_Port"],
+		configDB["DB_Username"],
+		configDB["DB_Password"],
 		configDB["DB_Name"])
-	db, e := gorm.Open(mysql.Open(openConnection), &gorm.Config{})
-	if e != nil {
-		panic(e)
+
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		panic(err)
 	}
 	return db
-
 }

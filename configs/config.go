@@ -1,31 +1,29 @@
 package configs
 
 import (
-	"fmt"
-	"os"
-	"time"
-
-	"strconv"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
+	"os"
+	"time"
 )
 
-// memanggil konfig pada env file
-func Config(key string) string {
-	err := godotenv.Load(".env")
-
-	if err != nil {
-		fmt.Println("Error loading file env")
+// LoadConfig loads environment variables from a .env file
+func LoadConfig() {
+	if err := godotenv.Load(); err != nil {
+		panic("Error loading .env file")
 	}
+}
 
+// Config retrieves a configuration value based on the provided key.
+func Config(key string) string {
 	return os.Getenv(key)
 }
 
+// ServerTimeOut returns the server configuration including timeouts.
 func ServerTimeOut() fiber.Config {
-	readTimeoutSecondCount, _ := strconv.Atoi(os.Getenv("SERVER_READ_TIMEOUT"))
-
 	return fiber.Config{
-		ReadTimeout: time.Second * time.Duration(readTimeoutSecondCount),
+		ReadTimeout:  60 * time.Second,
+		WriteTimeout: 60 * time.Second,
+		// Add other configuration options if needed
 	}
 }
